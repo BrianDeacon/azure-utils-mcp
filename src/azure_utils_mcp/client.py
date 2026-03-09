@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import subprocess
 
 from azure.cosmos import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.identity import DefaultAzureCredential
@@ -63,8 +64,21 @@ def get_subscription_id() -> str:
         _subscription_id = subs[0]["id"]
         return _subscription_id
 
+    try:
+        result = subprocess.run(
+            ["az", "account", "show", "--query", "id", "-o", "tsv"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            _subscription_id = result.stdout.strip()
+            return _subscription_id
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+
     raise RuntimeError(
-        "Multiple subscriptions found. Set AZURE_SUBSCRIPTION_ID to specify which one to use."
+        "Multiple subscriptions found. Set AZURE_SUBSCRIPTION_ID or use 'az account set' to select one."
     )
 
 

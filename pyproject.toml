@@ -1,6 +1,6 @@
 [project]
 name = "azure-utils-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for Azure Service Bus, Cosmos DB, and PIM role management"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
